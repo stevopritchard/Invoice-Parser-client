@@ -108,7 +108,7 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
             Clear
           </Button>
         </Container>
-        <Container className={classes.buttonArea}>
+        {/* <Container className={classes.buttonArea}>
           <Button 
             variant="outlined" 
             type="button" 
@@ -117,14 +117,17 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
           >
             Static
           </Button>
-        </Container>
-        <Container className={classes.buttonArea}>
+        </Container> */}
+        {/* <Container className={classes.buttonArea}>
           <Button
             variant="contained"
+            color="default"
+            type="button"
+            disableElevation 
           >
             Logout
           </Button>
-        </Container>
+        </Container> */}
       </Grid>
     </Toolbar>
     // </Grid>

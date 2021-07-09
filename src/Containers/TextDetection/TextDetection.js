@@ -63,7 +63,7 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
         return
       }
     })
-    const formResponse = await fetch('/getFormData', {
+    const formResponse = await fetch('https://tranquil-yellowstone-86058.herokuapp.com/getFormData', {
       method: "post",
       body: formData
     })
@@ -108,7 +108,7 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
             Clear
           </Button>
         </Container>
-        {/* <Container className={classes.buttonArea}>
+        <Container className={classes.buttonArea}>
           <Button 
             variant="outlined" 
             type="button" 
@@ -117,7 +117,7 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
           >
             Static
           </Button>
-        </Container> */}
+        </Container>
         {/* <Container className={classes.buttonArea}>
           <Button
             variant="contained"

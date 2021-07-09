@@ -102,7 +102,7 @@ export default function App() {
   }
 
   async function searchBP (orderNumber) {
-    let findOrder = await fetch('/queryBp', {
+    let findOrder = await fetch('https://tranquil-yellowstone-86058.herokuapp.com/queryBp', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export default function App() {
   //above function wrapped in a useCallback hook
   const checkDB = useCallback(
     async (invoiceNumber) => {
-      const checkInvoice = await fetch('/queryInvoice', {
+      const checkInvoice = await fetch('https://tranquil-yellowstone-86058.herokuapp.com/queryInvoice', {
         method: "post",
         headers: {
           'Content-Type': 'application/json'
@@ -166,7 +166,7 @@ export default function App() {
       let matchedNumbers = await checkDB(invoice.validNumber)
       console.log(matchedNumbers)
       if (!matchedNumbers && invoice.validNumber) {
-        const response = await fetch('http://localhost:5000/writeInvoice', {
+        const response = await fetch('https://tranquil-yellowstone-86058.herokuapp.com/writeInvoice', {
           method: "post",
           headers: {
             'Content-Type': 'application/json'

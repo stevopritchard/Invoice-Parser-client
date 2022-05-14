@@ -1,19 +1,19 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Container, Card, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
 
 const useStyles = makeStyles((theme) => ({
-  root:{
+  root: {
     display: 'flex',
     flexGrow: 1,
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
-  dropzone:{
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center"
+  dropzone: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   dropzoneCard: {
     // marginBottom: 40,
@@ -29,44 +29,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
-  const classes = useStyles()
+  const classes = useStyles();
 
-  var dummyData = [
-    {
-      name: 'Naylor 81091331 .jpg',
-      purchaseOrders: [ '342010','146499' ],
-      date: '19/02/2021',
-      updated: false
-    },
-    {
-      name: 'Eccles 61275.jpg',
-      purchaseOrders: [ '146865' ],
-      date: '16/02/2021',
-      updated: false
-    },
-    {
-      name: 'no-po.jpg',
-      purchaseOrders: [ '999999' ],
-      date: '01/01/2021',
-      updated: false
-    }
-  ]
-  
   const uploadImage = async (images) => {
-    setStatus("pending")
+    setStatus('pending');
     var formData = new FormData();
-    images.forEach(image => {
-      if (image.path.split('.').pop() === 'jpg' || image.path.split('.').pop() === 'png') {
-        formData.append('photo', image)
+    images.forEach((image) => {
+      if (
+        image.path.split('.').pop() === 'jpg' ||
+        image.path.split('.').pop() === 'png'
+      ) {
+        formData.append('photo', image);
       } else {
-        handleOpen(true, 'One or more files is of an invalid format.')
-        return
+        handleOpen(true, 'One or more files is of an invalid format.');
+        return;
       }
-    })
-    const formResponse = await fetch('https://tranquil-yellowstone-86058.herokuapp.com/getFormData', {
-      method: "post",
-      body: formData
-    })
+    });
+    const formResponse = await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/getFormData',
+      {
+        method: 'post',
+        body: formData,
+      }
+    );
     const formResponseData = await formResponse.json();
     // const tableResponse = await fetch('/getTableData', {
     //   method: "post",
@@ -75,34 +60,29 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
 
     // const tableResponseData = await tableResponse.json();
     // console.log(tableResponseData)
-    keyDataToParent({type: 'searchBP', data: Object.values(formResponseData)})
+    keyDataToParent({
+      type: 'searchBP',
+      data: Object.values(formResponseData),
+    });
 
     // keyDataToParent2(Object.values(formResponseData))
-    setStatus("fulfilled")
-  }
+    setStatus('fulfilled');
+  };
 
   return (
     // <Grid className={classes.root}>
     <Toolbar className={classes.root} variant="dense">
-      <Grid item xs={5}>
-        Dashboard
-      </Grid>
-      <Grid item xs={3} className={classes.dropzone}>
-        <Card 
-          variant="outlined" 
-          style={{border: '2px dashed gray'}}
-          className={classes.dropzoneCard}
-        >
-          <Dropzone uploadImage = {uploadImage}/>
-        </Card>
+      <Grid item xs={4}></Grid>
+      <Grid item xs={4} className={classes.dropzone}>
+        <Dropzone uploadImage={uploadImage} />
       </Grid>
       <Grid item xs={4} className={classes.toolbarButtons}>
         <Container className={classes.buttonArea}>
-          <Button 
+          <Button
             variant="contained"
             color="default"
-            type="button" 
-            disableElevation 
+            type="button"
+            disableElevation
             onClick={() => clearText()}
           >
             Clear

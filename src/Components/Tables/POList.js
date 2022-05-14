@@ -41,6 +41,13 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  TextField: {
+    InputProps: {
+      style: {
+        fontSize: 11,
+      },
+    },
+  },
 }));
 
 const StyledTableCell = withStyles((theme) => ({
@@ -142,13 +149,22 @@ export default function POList({
               return (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
-                    <TextField value={invoice.name}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.name}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <TextField value={invoice.date}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.date}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <TextField value={invoice.validNumber}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.validNumber}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
                     {invoice.validNumber ? 'Saved' : 'Not Saved'}
@@ -162,7 +178,11 @@ export default function POList({
                       )
                     ) : (
                       <div>
-                        <Button type="button" onClick={handleOpen}>
+                        <Button
+                          type="button"
+                          onClick={handleOpen}
+                          style={{ fontSize: 11 }}
+                        >
                           Enter details...
                         </Button>
                         <Modal

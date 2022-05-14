@@ -45,10 +45,13 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
         return;
       }
     });
-    const formResponse = await fetch('http://localhost:5000/getFormData', {
-      method: 'post',
-      body: formData,
-    });
+    const formResponse = await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/getFormData',
+      {
+        method: 'post',
+        body: formData,
+      }
+    );
     const formResponseData = await formResponse.json();
     // const tableResponse = await fetch('/getTableData', {
     //   method: "post",

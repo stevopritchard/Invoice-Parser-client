@@ -37,6 +37,7 @@ const StyledTableRow = withStyles((theme) => ({
   root: {
     '&:nth-ot-type(odd)': {
       backgroundColor: theme.palette.action.hover,
+      fontSize: 11,
     },
   },
 }))(TableRow);
@@ -65,19 +66,29 @@ export default function DocList({ savedDocs, deleteInvoice }) {
               return (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
-                    <TextField value={invoice.name}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.name}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <TextField value={invoice.date}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.date}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <TextField value={invoice.validNumber}></TextField>
+                    <TextField
+                      InputProps={{ style: { fontSize: 12 } }}
+                      value={invoice.validNumber}
+                    ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
                     <div>
                       <Button
                         type="button"
                         onClick={() => deleteInvoice(index)}
+                        style={{ fontSize: 11 }}
                       >
                         Delete
                       </Button>

@@ -75,12 +75,15 @@ export default function App() {
   }, [json]);
 
   async function getDocList() {
-    let requestDocs = await fetch('http://localhost:5000/getAllInvoices', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    let requestDocs = await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/getAllInvoices',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
     let docList = await requestDocs.json();
     setsavedDocs(docList);
   }
@@ -116,14 +119,17 @@ export default function App() {
   }
 
   async function searchBP(orderNumber) {
-    let findOrder = await fetch('http://localhost:5000/queryBp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({ orderId: orderNumber }),
-    });
+    let findOrder = await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/queryBp',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({ orderId: orderNumber }),
+      }
+    );
     let foundOrder = await findOrder.json();
     try {
       if (foundOrder !== null) {
@@ -135,13 +141,16 @@ export default function App() {
   }
 
   const checkDB = useCallback(async (invoiceNumber) => {
-    const checkInvoice = await fetch('http://localhost:5000/queryInvoice', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ validNumber: invoiceNumber }),
-    });
+    const checkInvoice = await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/queryInvoice',
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ validNumber: invoiceNumber }),
+      }
+    );
     const checkComplete = await checkInvoice.json();
     try {
       if (checkComplete.length === 1) {
@@ -173,13 +182,16 @@ export default function App() {
     invoices.forEach(async (invoice) => {
       let matchedNumbers = await checkDB(invoice.validNumber);
       if (!matchedNumbers && invoice.validNumber) {
-        const response = await fetch('http://localhost:5000/writeInvoice', {
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(invoice),
-        });
+        const response = await fetch(
+          'https://tranquil-yellowstone-86058.herokuapp.com/writeInvoice',
+          {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(invoice),
+          }
+        );
         const body = await response.json();
         invoice.updated = true;
         getDocList();
@@ -215,13 +227,16 @@ export default function App() {
   }
 
   async function deleteInvoice(i) {
-    await fetch('http://localhost:5000/deleteInvoice', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(savedDocs[i]),
-    });
+    await fetch(
+      'https://tranquil-yellowstone-86058.herokuapp.com/deleteInvoice',
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(savedDocs[i]),
+      }
+    );
     handleOpen(true, 'Record deleted.');
     getDocList();
   }

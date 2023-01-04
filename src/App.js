@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -62,6 +56,60 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+async function searchBP(orderNumber) {
+  let getOrderNumber = await fetch('http://localhost:5000/queryBp', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({ orderId: orderNumber }),
+  });
+  let foundOrder = await getOrderNumber.json();
+  try {
+    if (foundOrder !== null) {
+      return foundOrder;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const getInvoice = async (invoiceNumber) => {
+  const response = await fetch('http://localhost:5000/queryInvoice', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ validNumber: invoiceNumber }),
+  });
+  const invoices = await response.json();
+  console.log(invoices);
+  try {
+    if (invoices.length === 1) {
+      if (
+        'validNumber' in invoices[0] &&
+        invoices[0].validNumber === parseInt(invoiceNumber)
+      ) {
+        console.log('truly valid');
+        return true;
+      } else {
+        console.log('invalid');
+        return false;
+      }
+    } else {
+      throw new Error(`${invoiceNumber} is not a valid PO number`);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+function validateInvoiceNumber(invoice) {
+  invoice.validNumber = invoice.purchaseOrders[0];
+  return invoice;
+}
+
 export default function App() {
   const [invoices, setInvoices] = useState([]);
   const [savedDocs, setsavedDocs] = useState([]);
@@ -75,15 +123,12 @@ export default function App() {
   }, [json]);
 
   async function getDocList() {
-    let requestDocs = await fetch(
-      'https://tranquil-yellowstone-86058.herokuapp.com/getAllInvoices',
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    let requestDocs = await fetch('http://localhost:5000/getAllInvoices', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     let docList = await requestDocs.json();
     setsavedDocs(docList);
   }
@@ -118,58 +163,6 @@ export default function App() {
     setInvoices([]);
   }
 
-  async function searchBP(orderNumber) {
-    let findOrder = await fetch(
-      'https://tranquil-yellowstone-86058.herokuapp.com/queryBp',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({ orderId: orderNumber }),
-      }
-    );
-    let foundOrder = await findOrder.json();
-    try {
-      if (foundOrder !== null) {
-        return foundOrder;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  const checkDB = useCallback(async (invoiceNumber) => {
-    const checkInvoice = await fetch(
-      'https://tranquil-yellowstone-86058.herokuapp.com/queryInvoice',
-      {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ validNumber: invoiceNumber }),
-      }
-    );
-    const checkComplete = await checkInvoice.json();
-    try {
-      if (checkComplete.length === 1) {
-        if (
-          'validNumber' in checkComplete[0] &&
-          checkComplete[0].validNumber === parseInt(invoiceNumber)
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        throw new Error(`${invoiceNumber} is not a valid PO number`);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
-
   const handleOpen = (isOpen, response) => {
     snackText.current = response;
     setOpen(isOpen);
@@ -180,18 +173,15 @@ export default function App() {
 
   const writeToFile = () => {
     invoices.forEach(async (invoice) => {
-      let matchedNumbers = await checkDB(invoice.validNumber);
+      let matchedNumbers = await getInvoice(invoice.validNumber);
       if (!matchedNumbers && invoice.validNumber) {
-        const response = await fetch(
-          'https://tranquil-yellowstone-86058.herokuapp.com/writeInvoice',
-          {
-            method: 'post',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(invoice),
-          }
-        );
+        const response = await fetch('http://localhost:5000/writeInvoice', {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invoice),
+        });
         const body = await response.json();
         invoice.updated = true;
         getDocList();
@@ -209,34 +199,14 @@ export default function App() {
     setInvoices([]);
   };
 
-  function validateNum(invoice) {
-    // return Promise.all(
-    //   invoice.purchaseOrders.map((purchaseOrder) => {
-    //     return searchBP(purchaseOrder);
-    //   })
-    // ).then((validatedArr) => {
-    //   let validatedNum = validatedArr.filter((num) => {
-    //     return num !== undefined;
-    //   });
-    //   if (validatedNum.length > 0) {
-    //     invoice.validNumber = validatedNum[0].id;
-    //   }
-    invoice.validNumber = invoice.purchaseOrders[0];
-    return invoice;
-    // });
-  }
-
-  async function deleteInvoice(i) {
-    await fetch(
-      'https://tranquil-yellowstone-86058.herokuapp.com/deleteInvoice',
-      {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(savedDocs[i]),
-      }
-    );
+  async function deleteInvoice(invoice) {
+    await fetch('http://localhost:5000/deleteInvoice', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(savedDocs[invoice]),
+    });
     handleOpen(true, 'Record deleted.');
     getDocList();
   }
@@ -247,12 +217,12 @@ export default function App() {
       case 'searchBP': {
         Promise.all(
           action.data.map((invoice) => {
-            return validateNum(invoice);
+            return validateInvoiceNumber(invoice);
           })
         ).then((valArr) => {
           let newArr = [...valArr];
           valArr.map(async (invoice, index) => {
-            checkDB(invoice.validNumber).then((alreadySaved) => {
+            getInvoice(invoice.validNumber).then((alreadySaved) => {
               newArr[index].updated = alreadySaved;
             });
           });
@@ -301,7 +271,7 @@ export default function App() {
                             setJson={setJson}
                             searchBP={searchBP}
                             setInvoices={setInvoices}
-                            checkDB={checkDB}
+                            checkDB={getInvoice}
                           />
                         ) : (
                           <DocList
@@ -325,7 +295,7 @@ export default function App() {
                       message={snackText.current}
                     ></Snackbar>
                     <Button
-                      variant="primary"
+                      variant="contained"
                       color="inherit"
                       type="button"
                       disableElevation

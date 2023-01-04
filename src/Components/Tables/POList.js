@@ -53,7 +53,6 @@ const useStyles = makeStyles((theme) => ({
 const StyledTableCell = withStyles((theme) => ({
   head: {
     backgroundColor: '#03d1b2',
-    // color: '#03d1b2',
   },
   body: {
     fontSize: 11,
@@ -68,13 +67,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function POList({
-  invoices,
-  setJson,
-  searchBP,
-  setInvoices,
-  checkDB,
-}) {
+export default function POList({ invoices, setInvoices }) {
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
 
@@ -98,21 +91,13 @@ export default function POList({
   };
 
   const replaceOrderId = (i) => {
-    // searchBP(modalRefs.current[i]).then((response) => {
-    //   if (response.id) {
-    //     let newArr = [...invoices];
-    //     newArr[i].validNumber = response.id;
-    //     setInvoices(newArr);
-    //     handleClose();
-    //   }
-    // });
     let newArr = [...invoices];
     newArr[i].validNumber = modalRefs.current[i];
     setInvoices(newArr);
     handleClose();
   };
 
-  const body = (key) => {
+  const modalBody = (key) => {
     return (
       <div style={modalStyle} className={classes.paper}>
         <h2 id="simple-modal-title">Try another PO number</h2>
@@ -191,7 +176,7 @@ export default function POList({
                           aria-labelledby="simple-modal-title"
                           aria-describedby="simple-modal-description"
                         >
-                          {body(index)}
+                          {modalBody(index)}
                         </Modal>
                       </div>
                     )}
@@ -200,13 +185,6 @@ export default function POList({
               );
             })
           ) : (
-            // <StyledTableRow>
-            //     <StyledTableCell></StyledTableCell>
-            //     <StyledTableCell></StyledTableCell>
-            //     <StyledTableCell></StyledTableCell>
-            //     <StyledTableCell></StyledTableCell>
-            //     <StyledTableCell></StyledTableCell>
-            // </StyledTableRow>
             <div></div>
           )}
         </TableBody>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Container, Card, Button } from '@material-ui/core';
+import { Grid, Container, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
 
@@ -45,32 +45,22 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
         return;
       }
     });
-    const formResponse = await fetch(
-      'https://tranquil-yellowstone-86058.herokuapp.com/getFormData',
-      {
-        method: 'post',
-        body: formData,
-      }
-    );
-    const formResponseData = await formResponse.json();
-    // const tableResponse = await fetch('/getTableData', {
-    //   method: "post",
-    //   body: formData
-    // })
+    const formResponse = await fetch('http://localhost:5000/getFormData', {
+      method: 'post',
+      body: formData,
+    });
 
-    // const tableResponseData = await tableResponse.json();
-    // console.log(tableResponseData)
+    const formResponseData = await formResponse.json();
+
     keyDataToParent({
       type: 'searchBP',
       data: Object.values(formResponseData),
     });
 
-    // keyDataToParent2(Object.values(formResponseData))
     setStatus('fulfilled');
   };
 
   return (
-    // <Grid className={classes.root}>
     <Toolbar className={classes.root} variant="dense">
       <Grid item xs={4}></Grid>
       <Grid item xs={4} className={classes.dropzone}>
@@ -88,29 +78,8 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
             Clear
           </Button>
         </Container>
-        {/* <Container className={classes.buttonArea}>
-          <Button 
-            variant="outlined" 
-            type="button" 
-            disableElevation 
-            onClick={() => keyDataToParent({type: 'searchBP', data: dummyData})}
-          >
-            Static
-          </Button>
-        </Container> */}
-        {/* <Container className={classes.buttonArea}>
-          <Button
-            variant="contained"
-            color="default"
-            type="button"
-            disableElevation 
-          >
-            Logout
-          </Button>
-        </Container> */}
       </Grid>
     </Toolbar>
-    // </Grid>
   );
 }
 

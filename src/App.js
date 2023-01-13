@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import TextDetection from './Containers/TextDetection/TextDetection';
 import {
   BottomNavigation,
   CssBaseline,
@@ -13,10 +12,13 @@ import {
 } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Snackbar from '@material-ui/core/Snackbar';
-
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
+import SavedInvoiceList from './Components/Tables/SavedInvoiceList';
+import TextDetection from './Containers/TextDetection/TextDetection';
+import getPurchaseOrder from './getPurchaseOrder';
+import getSavedInvoices from './getSavedInvoices';
+import deleteInvoice from './deleteInvoice';
 import POList from './Components/Tables/POList';
-import DocList from './Components/Tables/DocList';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,86 +58,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-async function searchBP(orderNumber) {
-  let getOrderNumber = await fetch('http://localhost:5000/queryBp', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({ orderId: orderNumber }),
-  });
-  let foundOrder = await getOrderNumber.json();
-  try {
-    if (foundOrder !== null) {
-      return foundOrder;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-const getInvoice = async (invoiceNumber) => {
-  const response = await fetch('http://localhost:5000/queryInvoice', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ validNumber: invoiceNumber }),
-  });
-  const invoices = await response.json();
-  console.log(invoices);
-  try {
-    if (invoices.length === 1) {
-      if (
-        'validNumber' in invoices[0] &&
-        invoices[0].validNumber === parseInt(invoiceNumber)
-      ) {
-        console.log('truly valid');
-        return true;
-      } else {
-        console.log('invalid');
-        return false;
-      }
-    } else {
-      throw new Error(`${invoiceNumber} is not a valid PO number`);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 function validateInvoiceNumber(invoice) {
   invoice.validNumber = invoice.purchaseOrders[0];
+
   return invoice;
 }
 
 export default function App() {
   const [invoices, setInvoices] = useState([]);
-  const [savedDocs, setsavedDocs] = useState([]);
+  const [savedInvoices, setsavedInvoices] = useState([]);
   const [open, setOpen] = useState();
   const [json, setJson] = useState({});
   const [searchStatus, setStatus] = useState('fulfilled');
   const snackText = useRef();
 
-  useEffect(() => {
-    console.log(json);
-  }, [json]);
-
-  async function getDocList() {
-    let requestDocs = await fetch('http://localhost:5000/getAllInvoices', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    let docList = await requestDocs.json();
-    setsavedDocs(docList);
-  }
+  // useEffect(() => {
+  //   console.log(json, invoices);
+  // }, [json]);
 
   useEffect(() => {
-    getDocList();
-  }, []);
+    getSavedInvoices().then((res) => setsavedInvoices(res));
+  }, [invoices]);
 
   const classes = useStyles();
 
@@ -173,7 +116,8 @@ export default function App() {
 
   const writeToFile = () => {
     invoices.forEach(async (invoice) => {
-      let matchedNumbers = await getInvoice(invoice.validNumber);
+      let matchedNumbers = await getPurchaseOrder(invoice.validNumber);
+
       if (!matchedNumbers && invoice.validNumber) {
         const response = await fetch('http://localhost:5000/writeInvoice', {
           method: 'post',
@@ -183,8 +127,11 @@ export default function App() {
           body: JSON.stringify(invoice),
         });
         const body = await response.json();
+
         invoice.updated = true;
-        getDocList();
+
+        getSavedInvoices();
+
         return body;
       }
     });
@@ -199,36 +146,26 @@ export default function App() {
     setInvoices([]);
   };
 
-  async function deleteInvoice(invoice) {
-    await fetch('http://localhost:5000/deleteInvoice', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(savedDocs[invoice]),
-    });
-    handleOpen(true, 'Record deleted.');
-    getDocList();
-  }
+  const readInvoice = (response) => {
+    Promise.all(
+      response.map((invoice) => {
+        return validateInvoiceNumber(invoice);
+      })
+    ).then((validInvoices) => {
+      let currentInvoices = [...validInvoices];
 
+      validInvoices.map(async (invoice, index) => {
+        getPurchaseOrder(invoice.validNumber).then((alreadySaved) => {
+          currentInvoices[index].updated = alreadySaved;
+        });
+      });
+      setInvoices(currentInvoices);
+    });
+  };
   //changes the above hook to useReducer
   const reducer = (state, action) => {
     switch (action.type) {
-      case 'searchBP': {
-        Promise.all(
-          action.data.map((invoice) => {
-            return validateInvoiceNumber(invoice);
-          })
-        ).then((valArr) => {
-          let newArr = [...valArr];
-          valArr.map(async (invoice, index) => {
-            getInvoice(invoice.validNumber).then((alreadySaved) => {
-              newArr[index].updated = alreadySaved;
-            });
-          });
-          setInvoices(newArr);
-        });
-      }
+      case 'NEW_INVOICES':
       // eslint-disable-next-line no-fallthrough
       default:
         return state;
@@ -254,10 +191,11 @@ export default function App() {
                 <Divider />
                 <Grid container>
                   <TextDetection
-                    keyDataToParent={dispatch}
+                    readInvoice={readInvoice}
                     clearText={clearText}
                     handleOpen={handleOpen}
                     setStatus={setStatus}
+                    setInvoices={setInvoices}
                   />
                 </Grid>
                 <main className={classes.mainArea}>
@@ -268,15 +206,15 @@ export default function App() {
                         {invoices.length > 0 ? (
                           <POList
                             invoices={invoices}
-                            setJson={setJson}
-                            searchBP={searchBP}
+                            // setJson={setJson}
                             setInvoices={setInvoices}
-                            checkDB={getInvoice}
+                            // checkDB={getPurchaseOrder}
                           />
                         ) : (
-                          <DocList
-                            savedDocs={savedDocs}
+                          <SavedInvoiceList
+                            savedInvoices={savedInvoices}
                             deleteInvoice={deleteInvoice}
+                            handleOpen={handleOpen}
                           />
                         )}
                       </Grid>

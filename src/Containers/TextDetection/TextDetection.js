@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
+function TextDetection({ readInvoice, clearText, handleOpen, setStatus }) {
   const classes = useStyles();
 
   const uploadImage = async (images) => {
@@ -52,10 +52,7 @@ function TextDetection({ keyDataToParent, clearText, handleOpen, setStatus }) {
 
     const formResponseData = await formResponse.json();
 
-    keyDataToParent({
-      type: 'searchBP',
-      data: Object.values(formResponseData),
-    });
+    readInvoice(Object.values(formResponseData));
 
     setStatus('fulfilled');
   };

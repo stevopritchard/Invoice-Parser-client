@@ -42,7 +42,11 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function DocList({ savedDocs, deleteInvoice }) {
+export default function SavedInvoiceList({
+  savedInvoices,
+  deleteInvoice,
+  handleOpen,
+}) {
   const classes = useStyles();
 
   return (
@@ -50,7 +54,7 @@ export default function DocList({ savedDocs, deleteInvoice }) {
       <Table
         stickyHeader
         aria-label="sticky table"
-        style={{ display: savedDocs.length > 0 ? '' : 'none' }}
+        style={{ display: savedInvoices.length > 0 ? '' : 'none' }}
       >
         <TableHead>
           <TableRow>
@@ -61,8 +65,8 @@ export default function DocList({ savedDocs, deleteInvoice }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {savedDocs ? (
-            savedDocs.map((invoice, index) => {
+          {savedInvoices ? (
+            savedInvoices.map((invoice, index) => {
               return (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
@@ -87,7 +91,11 @@ export default function DocList({ savedDocs, deleteInvoice }) {
                     <div>
                       <Button
                         type="button"
-                        onClick={() => deleteInvoice(index)}
+                        onClick={() =>
+                          deleteInvoice(savedInvoices, index).then(
+                            handleOpen(true, 'Record deleted.')
+                          )
+                        }
                         style={{ fontSize: 11 }}
                       >
                         Delete

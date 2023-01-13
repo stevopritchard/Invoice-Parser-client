@@ -58,12 +58,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function validateInvoiceNumber(invoice) {
-  invoice.validNumber = invoice.purchaseOrders[0];
-
-  return invoice;
-}
-
 export default function App() {
   const [invoices, setInvoices] = useState([]);
   const [savedInvoices, setsavedInvoices] = useState([]);
@@ -78,7 +72,7 @@ export default function App() {
 
   useEffect(() => {
     getSavedInvoices().then((res) => setsavedInvoices(res));
-  }, [invoices]);
+  }, [savedInvoices]);
 
   const classes = useStyles();
 
@@ -146,22 +140,6 @@ export default function App() {
     setInvoices([]);
   };
 
-  const readInvoice = (response) => {
-    Promise.all(
-      response.map((invoice) => {
-        return validateInvoiceNumber(invoice);
-      })
-    ).then((validInvoices) => {
-      let currentInvoices = [...validInvoices];
-
-      validInvoices.map(async (invoice, index) => {
-        getPurchaseOrder(invoice.validNumber).then((alreadySaved) => {
-          currentInvoices[index].updated = alreadySaved;
-        });
-      });
-      setInvoices(currentInvoices);
-    });
-  };
   //changes the above hook to useReducer
   const reducer = (state, action) => {
     switch (action.type) {
@@ -191,7 +169,6 @@ export default function App() {
                 <Divider />
                 <Grid container>
                   <TextDetection
-                    readInvoice={readInvoice}
                     clearText={clearText}
                     handleOpen={handleOpen}
                     setStatus={setStatus}

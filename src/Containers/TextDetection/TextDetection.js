@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Container, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
+import getPurchaseOrder from '../../getPurchaseOrder';
+import validateInvoiceNumber from '../../validateInvoiceNumber';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +30,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TextDetection({ readInvoice, clearText, handleOpen, setStatus }) {
+function TextDetection({
+  // readInvoice,
+  clearText,
+  handleOpen,
+  setStatus,
+  setInvoices,
+}) {
   const classes = useStyles();
 
   const uploadImage = async (images) => {
@@ -52,8 +60,22 @@ function TextDetection({ readInvoice, clearText, handleOpen, setStatus }) {
 
     const formResponseData = await formResponse.json();
 
-    readInvoice(Object.values(formResponseData));
+    // readInvoice(Object.values(formResponseData));
 
+    Promise.all(
+      Object.values(formResponseData).map((invoice) => {
+        return validateInvoiceNumber(invoice);
+      })
+    ).then((validInvoices) => {
+      let currentInvoices = [...validInvoices];
+
+      validInvoices.map(async (invoice, index) => {
+        getPurchaseOrder(invoice.validNumber).then((alreadySaved) => {
+          currentInvoices[index].updated = alreadySaved;
+        });
+      });
+      setInvoices(currentInvoices);
+    });
     setStatus('fulfilled');
   };
 

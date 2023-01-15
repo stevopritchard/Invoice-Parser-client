@@ -53,14 +53,13 @@ function TextDetection({
         return;
       }
     });
+
     const formResponse = await fetch('http://localhost:5000/getFormData', {
       method: 'post',
       body: formData,
     });
 
     const formResponseData = await formResponse.json();
-
-    // readInvoice(Object.values(formResponseData));
 
     Promise.all(
       Object.values(formResponseData).map((invoice) => {

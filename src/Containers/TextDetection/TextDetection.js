@@ -1,42 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import useStyles from './useStyles';
 import { Grid, Container, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
 import getPurchaseOrder from '../../getPurchaseOrder';
 import validateInvoiceNumber from '../../validateInvoiceNumber';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexGrow: 1,
-    margin: theme.spacing(1),
-  },
-  dropzone: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  dropzoneCard: {
-    // marginBottom: 40,
-  },
-  buttonArea: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  toolbarButtons: {
-    display: 'flex',
-    marginLeft: 'auto',
-  },
-}));
-
-function TextDetection({
-  // readInvoice,
-  clearText,
-  handleOpen,
-  setStatus,
-  setInvoices,
-}) {
+function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
   const classes = useStyles();
 
   const uploadImage = async (images) => {
@@ -73,7 +43,9 @@ function TextDetection({
           currentInvoices[index].updated = alreadySaved;
         });
       });
-      setInvoices(currentInvoices);
+      setInvoices((previousInvoices) =>
+        [...previousInvoices].concat(currentInvoices)
+      );
     });
     setStatus('fulfilled');
   };

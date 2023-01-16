@@ -22,8 +22,12 @@ export default function Header({ darkState, handleDarkMode }) {
     <div className={classes.root}>
       <AppBar position="absolute">
         <Toolbar variant="dense">
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-          </IconButton>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="menu"
+          ></IconButton>
           <Typography variant="h6" color="inherit">
             Image Character Recognition
           </Typography>

@@ -1,17 +1,17 @@
-import React, { useEffect, useReducer, useRef, useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Button,
+  Grid,
   BottomNavigation,
   CssBaseline,
   Divider,
   Paper,
   Toolbar,
   Typography,
+  LinearProgress,
+  Snackbar,
 } from '@material-ui/core';
 import useStyles from './useStyles';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import SavedInvoiceList from './Components/Tables/SavedInvoiceList';
 import TextDetection from './Containers/TextDetection/TextDetection';
@@ -24,13 +24,8 @@ export default function App() {
   const [invoices, setInvoices] = useState([]);
   const [savedInvoices, setsavedInvoices] = useState([]);
   const [open, setOpen] = useState();
-  // const [json, setJson] = useState({});
   const [searchStatus, setStatus] = useState('fulfilled');
   const snackText = useRef();
-
-  // useEffect(() => {
-  //   console.log(json, invoices);
-  // }, [json]);
 
   useEffect(() => {
     getSavedInvoices().then((res) => setsavedInvoices(res));
@@ -70,19 +65,6 @@ export default function App() {
   const handleClose = () => {
     setOpen(false);
   };
-
-  // //changes the above hook to useReducer
-  // const reducer = (state, action) => {
-  //   switch (action.type) {
-  //     case 'NEW_INVOICES':
-  //     // eslint-disable-next-line no-fallthrough
-  //     default:
-  //       return state;
-  //   }
-  // };
-
-  // // eslint-disable-next-line no-unused-vars
-  // const [state, dispatch] = useReducer(reducer, []);
 
   return (
     <ThemeProvider theme={theme}>

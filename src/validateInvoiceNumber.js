@@ -1,5 +1,5 @@
 export default function validateInvoiceNumber(invoice) {
-  invoice.validNumber = invoice.purchaseOrders[0];
+  invoice.validRefNumber = invoice.candidateRefNumbers[0];
 
   return invoice;
 }

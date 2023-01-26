@@ -30,7 +30,8 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
     });
 
     const formResponseData = await formResponse.json();
-
+    console.log(Object.values(formResponseData));
+    console.log(formResponseData);
     Promise.all(
       Object.values(formResponseData).map((invoice) => {
         return validateInvoiceNumber(invoice);
@@ -39,7 +40,7 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
       let currentInvoices = [...validInvoices];
 
       validInvoices.map(async (invoice, index) => {
-        getPurchaseOrder(invoice.validNumber).then((alreadySaved) => {
+        getPurchaseOrder(invoice.validRefNumber).then((alreadySaved) => {
           currentInvoices[index].updated = alreadySaved;
         });
       });

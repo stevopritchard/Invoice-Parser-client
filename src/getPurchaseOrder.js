@@ -4,15 +4,15 @@ export default async function getPurchaseOrder(invoiceNumber) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ validNumber: invoiceNumber }),
+    body: JSON.stringify({ validRefNumber: invoiceNumber }),
   });
   const invoices = await response.json();
-  console.log(invoices);
+
   try {
     if (invoices.length === 1) {
       if (
-        'validNumber' in invoices[0] &&
-        invoices[0].validNumber === parseInt(invoiceNumber)
+        'validRefNumber' in invoices[0] &&
+        invoices[0].validRefNumber === parseInt(invoiceNumber)
       ) {
         console.log('truly valid');
         return true;

@@ -84,7 +84,7 @@ export default function SavedInvoiceList({
                   <StyledTableCell>
                     <TextField
                       InputProps={{ style: { fontSize: 12 } }}
-                      value={invoice.validNumber}
+                      value={invoice.validRefNumber}
                     ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>

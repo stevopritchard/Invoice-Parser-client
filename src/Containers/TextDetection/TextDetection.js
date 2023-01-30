@@ -3,12 +3,11 @@ import useStyles from './useStyles';
 import { Grid, Container, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
-import getPurchaseOrder from '../../getPurchaseOrder';
+import getInvoice from '../../getInvoice';
 import validateInvoiceNumber from '../../validateInvoiceNumber';
 
 function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
   const classes = useStyles();
-
   const uploadImage = async (images) => {
     setStatus('pending');
     var formData = new FormData();
@@ -30,17 +29,22 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
     });
 
     const formResponseData = await formResponse.json();
-    console.log(Object.values(formResponseData));
-    console.log(formResponseData);
+
     Promise.all(
       Object.values(formResponseData).map((invoice) => {
-        return validateInvoiceNumber(invoice);
+        return {
+          ...invoice,
+          validRefNumber: invoice.candidateRefNumbers.find((refNumber) => {
+            return validateInvoiceNumber(refNumber);
+          }),
+        };
       })
     ).then((validInvoices) => {
+      console.log(validInvoices);
       let currentInvoices = [...validInvoices];
 
-      validInvoices.map(async (invoice, index) => {
-        getPurchaseOrder(invoice.validRefNumber).then((alreadySaved) => {
+      validInvoices.forEach(async (invoice, index) => {
+        getInvoice(invoice.validRefNumber).then((alreadySaved) => {
           currentInvoices[index].updated = alreadySaved;
         });
       });

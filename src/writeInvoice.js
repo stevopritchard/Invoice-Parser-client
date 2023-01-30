@@ -1,10 +1,12 @@
-import getPurchaseOrder from './getPurchaseOrder';
+import getInvoice from './getInvoice';
 import getSavedInvoices from './getSavedInvoices';
 
 const writeInvoice = async (invoice) => {
-  let matchedNumbers = await getPurchaseOrder(invoice.validRefNumber);
-
+  console.log(invoice.validRefNumber);
+  const matchedNumbers = await getInvoice(invoice.validRefNumber);
+  console.log(matchedNumbers);
   if (!matchedNumbers && invoice.validRefNumber) {
+    console.log('truly valid');
     const response = await fetch('http://localhost:5000/writeInvoice', {
       method: 'post',
       headers: {

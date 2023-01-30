@@ -18,17 +18,20 @@ import TextDetection from './Containers/TextDetection/TextDetection';
 import getSavedInvoices from './getSavedInvoices';
 import writeInvoice from './writeInvoice';
 import deleteInvoice from './deleteInvoice';
-import POList from './Components/Tables/POList';
+import UnsavedInvoiceList from './Components/Tables/UnsavedInvoiceList';
 
 export default function App() {
   const [invoices, setInvoices] = useState([]);
   const [savedInvoices, setsavedInvoices] = useState([]);
   const [open, setOpen] = useState();
   const [searchStatus, setStatus] = useState('fulfilled');
+
   const snackText = useRef();
 
   useEffect(() => {
-    getSavedInvoices().then((res) => setsavedInvoices(res));
+    getSavedInvoices().then((res) => {
+      setsavedInvoices(res);
+    });
   }, [savedInvoices]);
 
   const classes = useStyles();
@@ -94,7 +97,7 @@ export default function App() {
                     <Grid item sm={10}>
                       <Grid container>
                         {invoices.length > 0 ? (
-                          <POList
+                          <UnsavedInvoiceList
                             invoices={invoices}
                             // setJson={setJson}
                             setInvoices={setInvoices}

@@ -67,7 +67,7 @@ const StyledTableRow = withStyles((theme) => ({
   },
 }))(TableRow);
 
-export default function POList({ invoices, setInvoices }) {
+export default function UnsavedInvoiceList({ invoices, setInvoices }) {
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
 
@@ -92,7 +92,7 @@ export default function POList({ invoices, setInvoices }) {
 
   const replaceOrderId = (i) => {
     let newArr = [...invoices];
-    newArr[i].validNumber = modalRefs.current[i];
+    newArr[i].validRefNumber = modalRefs.current[i];
     setInvoices(newArr);
     handleClose();
   };
@@ -148,14 +148,14 @@ export default function POList({ invoices, setInvoices }) {
                   <StyledTableCell>
                     <TextField
                       InputProps={{ style: { fontSize: 12 } }}
-                      value={invoice.validNumber}
+                      value={invoice.validRefNumber}
                     ></TextField>
                   </StyledTableCell>
                   <StyledTableCell>
-                    {invoice.validNumber ? 'Saved' : 'Not Saved'}
+                    {invoice.validRefNumber ? 'Saved' : 'Not Saved'}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {invoice.validNumber ? (
+                    {invoice.validRefNumber ? (
                       invoice.updated === true ? (
                         'Record already uploaded'
                       ) : (

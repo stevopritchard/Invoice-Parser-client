@@ -8,9 +8,12 @@ import validateInvoiceNumber from '../../validateInvoiceNumber';
 
 function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
   const classes = useStyles();
+
   const uploadImage = async (images) => {
     setStatus('pending');
+
     var formData = new FormData();
+
     images.forEach((image) => {
       if (
         image.path.split('.').pop() === 'jpg' ||
@@ -40,7 +43,6 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
         };
       })
     ).then((validInvoices) => {
-      console.log(validInvoices);
       let currentInvoices = [...validInvoices];
 
       validInvoices.forEach(async (invoice, index) => {

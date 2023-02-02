@@ -1,8 +1,8 @@
-async function validateInvoiceNumber(refNumber) {
-  const response = await fetch('http://localhost:5000/queryPurchaseOrder', {
-    method: 'post',
+export async function validateInvoiceNumber(refNumber) {
+  const response = await fetch("http://localhost:5000/queryPurchaseOrder", {
+    method: "post",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ refNumber: refNumber }),
   });
@@ -18,5 +18,3 @@ async function validateInvoiceNumber(refNumber) {
     return false;
   }
 }
-
-export default validateInvoiceNumber;

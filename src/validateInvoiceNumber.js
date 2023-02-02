@@ -1,4 +1,4 @@
-async function validateInvoiceNumber(refNumber) {
+export async function validateInvoiceNumber(refNumber) {
   const response = await fetch('http://localhost:5000/queryPurchaseOrder', {
     method: 'post',
     headers: {
@@ -18,5 +18,3 @@ async function validateInvoiceNumber(refNumber) {
     return false;
   }
 }
-
-export default validateInvoiceNumber;

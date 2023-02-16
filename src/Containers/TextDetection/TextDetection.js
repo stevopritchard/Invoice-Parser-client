@@ -11,7 +11,6 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
 
   const uploadImage = async (images) => {
     setStatus('pending');
-
     var formData = new FormData();
 
     images.forEach((image) => {

@@ -156,7 +156,7 @@ export default function UnsavedInvoiceList({ invoices, setInvoices }) {
                   </StyledTableCell>
                   <StyledTableCell>
                     {invoice.validRefNumber ? (
-                      invoice.updated === true ? (
+                      invoice.updated ? (
                         'Record already uploaded'
                       ) : (
                         'Ready to upload'

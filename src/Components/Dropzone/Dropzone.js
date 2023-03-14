@@ -14,7 +14,6 @@ function Dropzone({ uploadImage }) {
   const classes = useStyles();
   const onDrop = useCallback(
     (acceptedFiles) => {
-      console.log(acceptedFiles);
       uploadImage(acceptedFiles);
     },
     [uploadImage]

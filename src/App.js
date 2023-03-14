@@ -22,7 +22,7 @@ import UnsavedInvoiceList from './Components/Tables/UnsavedInvoiceList';
 
 export default function App() {
   const [invoices, setInvoices] = useState([]);
-  const [savedInvoices, setsavedInvoices] = useState([]);
+  const [savedInvoices, setSavedInvoices] = useState([]);
   const [open, setOpen] = useState();
   const [searchStatus, setStatus] = useState('fulfilled');
 
@@ -30,7 +30,7 @@ export default function App() {
 
   useEffect(() => {
     getSavedInvoices().then((res) => {
-      setsavedInvoices(res);
+      setSavedInvoices(res);
     });
   }, [savedInvoices]);
 
@@ -99,9 +99,7 @@ export default function App() {
                         {invoices.length > 0 ? (
                           <UnsavedInvoiceList
                             invoices={invoices}
-                            // setJson={setJson}
                             setInvoices={setInvoices}
-                            // checkDB={getPurchaseOrder}
                           />
                         ) : (
                           <SavedInvoiceList

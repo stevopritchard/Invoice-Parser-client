@@ -3,9 +3,8 @@ import useStyles from './useStyles';
 import { Grid, Container, Button } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Dropzone from '../../Components/Dropzone/Dropzone';
-import getInvoice from '../../getInvoice';
-import validateFileFormat from './validateFileFormat';
-import checkIfSaved from './checkIfSaved';
+import validateFileFormat from '../utils/validateFileFormat';
+import appendSavedInvoices from '../utils/appendSavedInvoices';
 
 function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
   const classes = useStyles();
@@ -25,7 +24,7 @@ function TextDetection({ clearText, handleOpen, setStatus, setInvoices }) {
     const validInvoices = await formResponse.json();
 
     setInvoices((previousInvoices) =>
-      [...previousInvoices].concat(checkIfSaved(validInvoices, getInvoice))
+      appendSavedInvoices(previousInvoices, validInvoices)
     );
 
     setStatus('fulfilled');

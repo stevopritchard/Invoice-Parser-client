@@ -9,11 +9,7 @@ export default async function getInvoice(invoiceNumber) {
   const invoices = await response.json();
 
   try {
-    if (invoices) {
-      return true;
-    } else {
-      return false;
-    }
+    return invoices ? true : false;
   } catch (err) {
     throw new Error(`${invoiceNumber} is not a valid PO number`);
   }
